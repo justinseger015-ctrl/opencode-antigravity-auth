@@ -27,7 +27,7 @@ interface AntigravityUserTier {
 }
 
 interface LoadCodeAssistPayload {
-  cloudaicompanionProject?: string;
+  cloudaicompanionProject?: string | { id?: string };
   currentTier?: {
     id?: string;
   };

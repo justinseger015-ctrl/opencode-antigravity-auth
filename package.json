@@ -1,22 +1,56 @@
 {
   "name": "opencode-antigravity-auth",
-  "module": "index.ts",
   "version": "1.0.2",
-  "author": "noefabris",
-  "repository": "https://github.com/NoeFabris/opencode-antigravity-auth",
-  "files": [
-    "index.ts",
-    "src"
-  ],
-  "license": "MIT",
+  "description": "Google Antigravity IDE OAuth auth plugin for Opencode - access Gemini 3 Pro and Claude 4.5 using Google credentials",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
-  "devDependencies": {
-    "@opencode-ai/plugin": "^0.15.30",
-    "@types/bun": "latest",
-    "@types/node": "^24.10.1"
+  "license": "MIT",
+  "author": "noefabris",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoeFabris/opencode-antigravity-auth.git"
+  },
+  "homepage": "https://github.com/NoeFabris/opencode-antigravity-auth#readme",
+  "bugs": {
+    "url": "https://github.com/NoeFabris/opencode-antigravity-auth/issues"
+  },
+  "keywords": [
+    "opencode",
+    "google",
+    "antigravity",
+    "gemini",
+    "oauth",
+    "plugin",
+    "auth",
+    "claude",
+    "ide"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^0.15.30",
+    "@types/node": "^24.10.1",
+    "@vitest/ui": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.0.0"
   },
   "dependencies": {
     "@openauthjs/openauth": "^0.4.3"

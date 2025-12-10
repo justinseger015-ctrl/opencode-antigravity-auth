@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, mock } from "bun:test";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ANTIGRAVITY_PROVIDER_ID } from "../constants";
 import { refreshAccessToken } from "./token";
@@ -14,21 +14,21 @@ const baseAuth: OAuthAuthDetails = {
 function createClient() {
   return {
     auth: {
-      set: mock(async () => {}),
+      set: vi.fn(async () => {}),
     },
   } as PluginClient & {
-    auth: { set: ReturnType<typeof mock<(input: any) => Promise<void>>> };
+    auth: { set: ReturnType<typeof vi.fn> };
   };
 }
 
 describe("refreshAccessToken", () => {
   beforeEach(() => {
-    mock.restore();
+    vi.restoreAllMocks();
   });
 
-  it("updates the caller but skips persisting when refresh token is unchanged", async () => {
+  it("updates the caller and persists when refresh token is unchanged", async () => {
     const client = createClient();
-    const fetchMock = mock(async () => {
+    const fetchMock = vi.fn(async () => {
       return new Response(
         JSON.stringify({
           access_token: "new-access",
@@ -37,17 +37,17 @@ describe("refreshAccessToken", () => {
         { status: 200 },
       );
     });
-    (globalThis as { fetch: typeof fetch }).fetch = fetchMock as unknown as typeof fetch;
+    global.fetch = fetchMock as unknown as typeof fetch;
 
-    const result = await refreshAccessToken(baseAuth, client);
+    const result = await refreshAccessToken(baseAuth, client, ANTIGRAVITY_PROVIDER_ID);
 
     expect(result?.access).toBe("new-access");
-    expect(client.auth.set.mock.calls.length).toBe(0);
+    expect(client.auth.set.mock.calls.length).toBe(1);
   });
 
   it("persists when Google rotates the refresh token", async () => {
     const client = createClient();
-    const fetchMock = mock(async () => {
+    const fetchMock = vi.fn(async () => {
       return new Response(
         JSON.stringify({
           access_token: "next-access",
@@ -57,9 +57,9 @@ describe("refreshAccessToken", () => {
         { status: 200 },
       );
     });
-    (globalThis as { fetch: typeof fetch }).fetch = fetchMock as unknown as typeof fetch;
+    global.fetch = fetchMock as unknown as typeof fetch;
 
-    const result = await refreshAccessToken(baseAuth, client);
+    const result = await refreshAccessToken(baseAuth, client, ANTIGRAVITY_PROVIDER_ID);
 
     expect(result?.access).toBe("next-access");
     expect(client.auth.set.mock.calls.length).toBe(1);
