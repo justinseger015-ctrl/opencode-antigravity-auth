@@ -1038,9 +1038,10 @@ describe("transform/gemini", () => {
       
       expect(result.toolDebugMissing).toBe(1);
       
-      // Check that placeholder uses uppercase types
+      // Check that placeholder uses uppercase types (schema is in function.input_schema)
       const tool = (payload.tools as unknown[])[0] as Record<string, unknown>;
-      const params = tool.parameters as Record<string, unknown>;
+      const fn = tool.function as Record<string, unknown>;
+      const params = fn.input_schema as Record<string, unknown>;
       expect(params.type).toBe("OBJECT");
       
       const props = params.properties as Record<string, Record<string, string>>;

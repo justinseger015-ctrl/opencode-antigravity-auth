@@ -296,31 +296,28 @@ export function normalizeGeminiTools(
       (newTool.custom as Record<string, unknown>).input_schema = schema;
     }
     
-    // Create custom from function if missing
-    if (!newTool.custom && newTool.function) {
-      const fn = newTool.function as Record<string, unknown>;
-      newTool.custom = {
-        name: fn.name || nameCandidate,
-        description: fn.description,
+    // Create function from custom if function is missing (custom will be deleted later)
+    if (!newTool.function && newTool.custom) {
+      const custom = newTool.custom as Record<string, unknown>;
+      newTool.function = {
+        name: custom.name || nameCandidate,
+        description: custom.description,
         input_schema: schema,
       };
     }
-
-    // Create custom if both missing
-    if (!newTool.custom && !newTool.function) {
-      newTool.custom = {
+    
+    // Create function if both missing
+    if (!newTool.function && !newTool.custom) {
+      newTool.function = {
         name: nameCandidate,
         description: newTool.description,
         input_schema: schema,
       };
-
-      if (!newTool.parameters && !newTool.input_schema && !newTool.inputSchema) {
-        newTool.parameters = schema;
-      }
     }
     
-    if (newTool.custom && !(newTool.custom as Record<string, unknown>).input_schema) {
-      (newTool.custom as Record<string, unknown>).input_schema = { 
+    // Ensure function.input_schema is always set
+    if (newTool.function && !(newTool.function as Record<string, unknown>).input_schema) {
+      (newTool.function as Record<string, unknown>).input_schema = schema || { 
         type: "OBJECT", 
         properties: {}, 
       };
@@ -328,7 +325,7 @@ export function normalizeGeminiTools(
     }
 
     toolDebugSummaries.push(
-      `idx=${toolIndex}, hasCustom=${!!newTool.custom}, customSchema=${!!(newTool.custom as Record<string, unknown> | undefined)?.input_schema}, hasFunction=${!!newTool.function}, functionSchema=${!!(newTool.function as Record<string, unknown> | undefined)?.input_schema}`,
+      `idx=${toolIndex}, hasFunction=${!!newTool.function}, functionSchema=${!!(newTool.function as Record<string, unknown> | undefined)?.input_schema}`,
     );
 
     // Strip custom wrappers for Gemini; only function-style is accepted.
