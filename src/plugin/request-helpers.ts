@@ -1,5 +1,6 @@
 import { getKeepThinking } from "./config";
 import { createLogger } from "./logger";
+import { cacheSignature } from "./cache";
 import {
   EMPTY_SCHEMA_PLACEHOLDER_NAME,
   EMPTY_SCHEMA_PLACEHOLDER_DESCRIPTION,
@@ -1359,7 +1360,8 @@ function transformGeminiCandidate(candidate: any): any {
 
     // Handle Gemini-style: thought: true
     if (part.thought === true) {
-      thinkingTexts.push(part.text || "");
+      const thinkingText = part.text || "";
+      thinkingTexts.push(thinkingText);
       const transformed: Record<string, unknown> = { ...part, type: "reasoning" };
       if (part.cache_control) transformed.cache_control = part.cache_control;
 
