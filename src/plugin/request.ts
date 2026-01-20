@@ -430,7 +430,11 @@ function ensureThinkingBeforeToolUseInContents(contents: any[], signatureSession
 
     const lastThinking = defaultSignatureStore.get(signatureSessionKey);
     if (!lastThinking) {
-      return content;
+      // No cached signature available - strip thinking blocks entirely
+      // Claude requires valid signatures, and we can't fake them
+      // Return only tool_use parts without any thinking to avoid signature validation errors
+      log.debug("Stripping thinking from tool_use content (no valid cached signature)", { signatureSessionKey });
+      return { ...content, parts: otherParts };
     }
 
     const injected = {
