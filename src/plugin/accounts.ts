@@ -52,6 +52,7 @@ export function parseRateLimitReason(
     
     // RPM / TPM (Short Wait)
     // "per minute", "rate limit", "too many requests"
+    // "presque" (French: almost) - retained for i18n parity with Rust reference
     if (lower.includes("per minute") || lower.includes("rate limit") || lower.includes("too many requests") || lower.includes("presque")) {
       return "RATE_LIMIT_EXCEEDED";
     }

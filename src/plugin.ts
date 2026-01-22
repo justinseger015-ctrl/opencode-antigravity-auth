@@ -1227,7 +1227,7 @@ export const createAntigravityPlugin = (providerId: string) => async (
 
 
                 // Handle 429 rate limit (or Service Overloaded) with improved logic
-                if (response.status === 429 || response.status === 503 || response.status === 529 || response.status === 500) {
+                if (response.status === 429 || response.status === 503 || response.status === 529) {
                   // Refund token on rate limit
                   if (tokenConsumed) {
                     getTokenTracker().refund(account.index);
@@ -1283,12 +1283,11 @@ export const createAntigravityPlugin = (providerId: string) => async (
                      const waitSec = Math.round(waitMs / 1000);
                      
                      // Only increment for logging/toast frequency, NOT for exponential backoff state of the ACCOUNT
-                     const failures = (account.consecutiveFailures ?? 0) + 1;
-                     account.consecutiveFailures = failures;
+                     // We use 'attempt' from the loop context instead of polluting account.consecutiveFailures
                      
-                     pushDebug(`Server busy (${rateLimitReason}) on account ${account.index}, soft wait ${waitMs}ms (failure #${failures})`);
+                     pushDebug(`Server busy (${rateLimitReason}) on account ${account.index}, soft wait ${waitMs}ms (attempt #${attempt})`);
 
-                     if (failures % 2 === 1) { // Show on odd attempts (1, 3, 5)
+                     if (attempt % 2 === 1) { // Show on odd attempts (1, 3, 5)
                        await showToast(
                          `⏳ Server busy (${response.status}). Retrying in ${waitSec}s...`,
                          "warning",
