@@ -230,6 +230,10 @@ Add multiple Google accounts for higher combined quotas. The plugin automaticall
 opencode auth login  # Run again to add more accounts
 ```
 
+**Account management options (via `opencode auth login`):**
+- **Check quotas** — View remaining API quota for each account
+- **Manage accounts** — Enable/disable specific accounts for rotation
+
 For details on load balancing, dual quota pools, and account storage, see [docs/MULTI-ACCOUNT.md](docs/MULTI-ACCOUNT.md).
 
 ---
